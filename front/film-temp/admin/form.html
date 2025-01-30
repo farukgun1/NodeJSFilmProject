@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Yönetim Paneli</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .panel-header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Panel Başlık -->
+    <header class="panel-header text-center">
+        <h1>Yönetim Paneli</h1>
+        <p>Film Paneli</p>
+    </header>
+
+    <!-- CRUD Panel -->
+    <main class="container my-5">
+        <!-- Veri Ekleme Formu -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Veri Ekle</h5>
+            </div>
+            <div class="card-body">
+                <form id="addDataForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Film Adı</label>
+                            <input type="text" class="form-control" id="inputFilmname" name="filmName"
+                                placeholder="Film adı giriniz..." required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Yönetmen</label>
+                            <input type="text" class="form-control" id="inputYonetmen" name="filmDirector"
+                                placeholder="Yönetmen Adı Giriniz" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label for="role" class="form-label">Film Türü</label>
+                            <input type="text" class="form-control" id="inputTur" name="filmTur" placeholder="Korku... Gerilim....">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="role" class="form-label">IMDB</label>
+                            <input type="text" class="form-control" name="filmIMDB" placeholder="" id="inputIMDB">
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label for="inputFilmImage" class="form-label">Film Resmi (Yükle)</label>
+                            <input type="file" class="form-control" id="inputFilmImage" name="filmImage" accept="image/*" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputVideoLink" class="form-label">Video Linki</label>
+                            <input type="text" class="form-control" name="videoLink" id="inputVideoLink"
+                                placeholder="https://www.youtube.com/embed/YOUR_VIDEO_ID">
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="filmKaydetBtn" class="btn btn-primary mt-4">Kaydet</button>
+                </form>
+            </div>
+            
+        </div>
+
+        <!-- Veri Listesi -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Film Listesi</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Film Adı</th>
+                            <th>Yönetmen</th>
+                            <th>Tür</th>
+                            <th>IMDB</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        <!-- Dinamik olarak eklenecek satırlar burada olacak -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+        <!-- Modal Düzenleme Formu -->
+       <!-- Modal -->
+<div class="modal" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Film Güncelle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Gizli input: Film ID'si -->
+          <input type="hidden" id="inputEditFilmId" />
+  
+          <div class="mb-3">
+            <label for="inputEditFilmname" class="form-label">Film Adı</label>
+            <input type="text" class="form-control" id="inputEditFilmname">
+          </div>
+          <div class="mb-3">
+            <label for="inputEditYonetmen" class="form-label">Yönetmen</label>
+            <input type="text" class="form-control" id="inputEditYonetmen">
+          </div>
+          <div class="mb-3">
+            <label for="inputEditTur" class="form-label">Tür</label>
+            <input type="text" class="form-control" id="inputEditTur">
+          </div>
+          <div class="mb-3">
+            <label for="inputEditIMDB" class="form-label">IMDB Puanı</label>
+            <input type="text" class="form-control" id="inputEditIMDB">
+          </div>
+          <div class="mb-3">
+            <!-- <label for="inputEditFilmImage" class="form-label">Film Resmi (URL)</label>
+            <input type="text" class="form-control" id="inputEditFilmImage">
+        </div> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+          <button type="button" class="btn btn-primary" name="updateicin" id="updateFilmModalBtn">Güncelle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.all.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script src="/front/film-temp/js/pages-js/filmPanel.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
